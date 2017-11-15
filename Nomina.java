@@ -20,6 +20,10 @@ public class Nomina //Inicio clase Nomina
     String[][] nomina = leerArchivo(nombreArchivo);
     String[] empleado = new String[6];
 
+    System.out.println("Numero de Nomina:       Nombre:");
+    for(int y = 0; y < nomina.length; y++){
+      System.out.println(imprimirEmpleado(nomina, y));
+    }
 
     percepciones = calcularPercepciones(nomina, encontrarEmpleado(nomina));
     System.out.println(percepciones);
@@ -29,7 +33,6 @@ public class Nomina //Inicio clase Nomina
 
     sueldoNeto = calcularSueldoNeto(percepciones, deducciones);
     System.out.println(sueldoNeto);
-
 
   }
 
@@ -147,6 +150,14 @@ public class Nomina //Inicio clase Nomina
     double sueldoNeto;
     sueldoNeto = percepciones - deducciones;
     return (sueldoNeto);
+  }
+
+  public static String imprimirEmpleado(String[][] nomina, int y){
+    String nombre, apellido, numeroDeNomina;
+    nombre = nomina[y][0];
+    apellido = nomina[y][1];
+    numeroDeNomina = nomina[y][5];
+    return ("       " +numeroDeNomina + "                " + nombre + " " + apellido);
   }
 
 }
