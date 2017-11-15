@@ -15,22 +15,11 @@ public class Nomina //Inicio clase Nomina
 {
   public static void main(String[] args) throws IOException
   {
-    String nombreArchivo = "BD-ProyectoProgra.csv";
+    String nombreArchivo = "Informacion_Empleados.csv";
     String[][] nomina = leerArchivo(nombreArchivo);
     String[] empleado = new String[6];
 
-    for(int y = 0; y < 20; y++)
-    {
-      for(int x = 0; x < 6; x++){
-        System.out.print(nomina[y][x]+"\t\t");
-      }
-      System.out.println();
-    }
-    System.out.println();
-    //nomina[0][0] = "Karla"
-    guardarNomina(nombreArchivo, nomina);
-    System.out.println("Hola!!!!");
-    System.out.println(nomina[19][5]);
+    System.out.println(calcularPercepciones(nomina, encontrarEmpleado(nomina)));
   }
 
   //leerArchivo guarda los datos de Excel en una matriz
@@ -75,21 +64,57 @@ public class Nomina //Inicio clase Nomina
     }
     escritor.close();
   }
-//salario saca el total y desglose del salario del empleado
+  //salario saca el total y desglose del salario del empleado
   public static void salario(String[][] nomina){
-    Scanner sc = new Scanner(System.in);
-    int diasTrab = 0;
-    int nomEmp = 0;
-    int j = 0;
+  }
+
+  //Este metodo busca al empleado en el arreglo nomina y regresa la posicion en la se encuentra.
+  public static int encontrarEmpleado(String[][] nomina){
+    Scanner lectura = new Scanner(System.in);
+    String nominaEmpleado;
+    int posicionEmpleado = 0;
 
     System.out.print("Ingrese el número de nómina del trabajador: ");
-    nomEmp = sc.nextInt();
+    nominaEmpleado = lectura.next();
 
     for (int y = 0; y < nomina.length; y++) {
-      if (nomina[y][5] == nomEmp) {
-        y = j;
+      if (nomina[y][5].equals(nominaEmpleado)) {
+          posicionEmpleado = y;
       }
     }
-
+    return (posicionEmpleado);
   }
+
+  public static double calcularPercepciones(String[][] nomina, int posicionEmpleado){
+    Scanner lectura = new Scanner(System.in);
+    double percepciones = 0, sueldo = 0, asignaciones = 0, salarioDiario = 0, bonos = 0, diasTrabajados = 0, feriados = 0, horasExtra = 0;
+
+    System.out.println("Escribe la información que se pide: ");
+
+    System.out.println("Dias Trabajados: ");
+    diasTrabajados = lectura.nextInt();
+
+    System.out.println("Bonos: ");
+    bonos = lectura.nextInt();
+
+    System.out.println("Feriados: ");
+    feriados = lectura.nextInt();
+
+    System.out.println("Horas Extra: ");
+    horasExtra = lectura.nextInt();
+
+    salarioDiario = Double.parseDouble(nomina[posicionEmpleado][3]) / 30;
+
+    System.out.println(nomina[posicionEmpleado][3]);
+    sueldo = salarioDiario * diasTrabajados;
+
+    feriados = salarioDiario * feriados;
+    horasExtra = (salarioDiario / 8) * horasExtra;
+
+    asignaciones = feriados + horasExtra + bonos;
+    percepciones = sueldo + asignaciones;
+
+    return (percepciones);
+  }
+
 }
