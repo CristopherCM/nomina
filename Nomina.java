@@ -15,11 +15,22 @@ public class Nomina //Inicio clase Nomina
 {
   public static void main(String[] args) throws IOException
   {
+    double percepciones, deducciones, sueldoNeto;
     String nombreArchivo = "Informacion_Empleados.csv";
     String[][] nomina = leerArchivo(nombreArchivo);
     String[] empleado = new String[6];
 
-    System.out.println(calcularPercepciones(nomina, encontrarEmpleado(nomina)));
+
+    percepciones = calcularPercepciones(nomina, encontrarEmpleado(nomina));
+    System.out.println(percepciones);
+
+    deducciones = calcularDeducciones(percepciones);
+    System.out.println(deducciones);
+
+    sueldoNeto = calcularSueldoNeto(percepciones, deducciones);
+    System.out.println(sueldoNeto);
+
+
   }
 
   //leerArchivo guarda los datos de Excel en una matriz
@@ -115,6 +126,27 @@ public class Nomina //Inicio clase Nomina
     percepciones = sueldo + asignaciones;
 
     return (percepciones);
+  }
+
+  public static double calcularDeducciones(double percepciones){
+    Scanner lectura = new Scanner(System.in);
+    double deducciones, iva, isr, prestamos;
+
+    System.out.println("Prestamos: ");
+
+    prestamos = lectura.nextInt();
+    iva = percepciones * 0.16;
+    isr = percepciones * 0.18;
+
+    deducciones = prestamos + iva + isr;
+
+    return (deducciones);
+  }
+
+  public static double calcularSueldoNeto(double percepciones, double deducciones){
+    double sueldoNeto;
+    sueldoNeto = percepciones - deducciones;
+    return (sueldoNeto);
   }
 
 }
