@@ -8,67 +8,171 @@ Por:
 -Luis Revilla
 *****************************************************/
 
-import java.util.Scanner;
+import java.util.*;
 import java.io.*;
 
 public class Nomina //Inicio clase Nomina
 {
   public static void main(String[] args) throws IOException
   {
-    double salarioMensual, salarioDiario, bonos, sueldo, sueldoDiasFeriados, sueldoHorasExtra, asignaciones, percepciones, deducciones, sueldoNeto;
-    int diasTrabajados, horasExtra, feriados;
+    //Declaracion de variables
+    double salarioMensual, salarioDiario, bonos, sueldo, sueldoDiasFeriados, sueldoHorasExtra, asignaciones, percepciones, deducciones, sueldoNeto, prestamos, deduccionPorIva, deduccionPorIsr;
+
+    int diasTrabajados, horasExtra, feriados, menu, totalEmpleados = 21;
     String nombreArchivo = "Informacion_Empleados.csv";
-    String[][] nomina = leerArchivo(nombreArchivo);
+    String[][] nomina;
     Scanner lectura = new Scanner(System.in);
     int posicionEmpleado;
     String[] empleado = new String[6];
+    String nominaEmpleado;
+    boolean salir = false;
 
-    System.out.println("Numero de Nomina:       Nombre:");
-    for(int y = 0; y < nomina.length; y++){
-      System.out.println(imprimirEmpleado(nomina, y));
+    while(salir == false){
+
+      nomina = leerNomina(nombreArchivo, totalEmpleados);
+      System.out.println();
+
+      System.out.println("##########################");
+      System.out.println("# BIENVENIDO A LA NOMINA #");
+      System.out.println("##########################");
+
+      System.out.println();
+      //Impresion de la nomina
+      System.out.println("Numero de Nomina:       Nombre:");
+      System.out.println();
+      for(int y = 1; y < totalEmpleados; y++){
+        System.out.println(imprimirEmpleado(nomina, y));
+      }
+      System.out.println();
+      System.out.println("SELECCIONE EL NUMERO DE LA OPCIÓN QUE DESEE REALIZAR");
+      System.out.println(" (1) Buscar Empleado por Nomina ");
+      System.out.println(" (2) Agregar Empleado ");
+      System.out.println(" (3) Eliminar Empleado ");
+      System.out.println(" (4) Salir");
+      System.out.println("Opción: ");
+      menu = lectura.nextInt();
+
+      switch(menu){
+        case 1:
+          System.out.println("ESCRIBA LA NOMINA DEL EMPLEADO QUE DESEAS BUSCAR");
+          System.out.print("Nomina: ");
+          nominaEmpleado = lectura.next();
+
+          posicionEmpleado = encontrarEmpleado(nomina, nominaEmpleado);
+
+          if(posicionEmpleado != -1){
+
+            System.out.println();
+            System.out.println("***********************************");
+            for(int x = 0; x < nomina[0].length; x++){
+              System.out.println(imprimirFichaEmpleado(nomina, posicionEmpleado, x));
+            }
+            System.out.println("***********************************");
+            System.out.println();
+
+            System.out.println("ESCRIBA EL NUMERO DE LA OPCIÓN QUE DESEE REALIZAR");
+            System.out.println(" (5) Obtener pago del empleado ");
+            System.out.println(" (6) Modificar la información del empleado ");
+            menu = lectura.nextInt();
+
+            switch(menu){
+              case 5:
+                salarioMensual = Double.parseDouble(nomina[posicionEmpleado][3]);
+
+                System.out.println("ESCRIBA LA INFORMACION QUE SE PIDE");
+
+                System.out.println("ASIGNACIONES");
+
+                System.out.println("Días Trabajados: ");
+                diasTrabajados = lectura.nextInt();
+
+                System.out.println("Bonos: ");
+                bonos = lectura.nextDouble();
+
+                System.out.println("Días Feriados: ");
+                feriados = lectura.nextInt();
+
+                System.out.println("Horas Extra: ");
+                horasExtra = lectura.nextInt();
+
+                salarioDiario = calcularSalarioDiario(salarioMensual);
+                sueldo = calcularSueldo(salarioDiario, diasTrabajados);
+                sueldoDiasFeriados = calcularSueldoDiasFeriados(salarioDiario, feriados);
+                sueldoHorasExtra = calcularSueldoHorasExtra(salarioDiario, horasExtra);
+                asignaciones = calcularAsignaciones(sueldoDiasFeriados, sueldoHorasExtra, bonos);
+                percepciones = calcularPercepciones(sueldo, asignaciones);
+
+                System.out.println("DEDUCCIONES");
+
+                System.out.println("Prestamos ($): ");
+                prestamos = lectura.nextDouble();
+
+                deduccionPorIsr = calcularIsr(percepciones);
+                deduccionPorIva = calcularIva(percepciones);
+                deducciones = calcularDeducciones(prestamos, deduccionPorIva, deduccionPorIsr);
+                sueldoNeto = calcularSueldoNeto(percepciones, deducciones);
+
+                System.out.println("************************************");
+                System.out.println(" RECIBO DE PAGO DE " + nomina[posicionEmpleado][0].toUpperCase() + " " + nomina[posicionEmpleado][1].toUpperCase());
+                System.out.println(" Asignaciones: ");
+                System.out.println("   Bonos: $" + bonos);
+                System.out.println("   Sueldo por días feriados: $" + sueldoDiasFeriados);
+                System.out.println("   Sueldo por horas extras: $" + sueldoHorasExtra );
+                System.out.println("     Percepciones: $" + percepciones);
+                System.out.println("------------------------------------");
+                System.out.println(" Deducciones: ");
+                System.out.println("   Prestamos: $" + prestamos);
+                System.out.println("   IVA: $" + deduccionPorIva);
+                System.out.println("   ISR: $" + deduccionPorIsr);
+                System.out.println("     Total de deducciones: $" + deducciones);
+                System.out.println("-------------------------------------");
+                System.out.println("Sueldo Neto: $" + sueldoNeto);
+                System.out.println("*************************************");
+
+                break;
+                case 6:
+                  break;
+                default:
+                  System.out.println("Ha ocurrido un error");
+            }
+         }
+         else{
+           System.out.println("La nomina no existe");
+           break;
+         }
+
+         case 2:
+            System.out.println("ESCRIBE LA INFORMACIÓN REQUERIDA: ");
+            for(int y = 0; y < nomina[0].length; y++){
+              System.out.println(nomina[0][y] + ": ");
+              empleado[y] = lectura.next();
+            }
+            totalEmpleados = agregarEmpleado(nombreArchivo, nomina, empleado, totalEmpleados);
+            nomina = leerNomina(nombreArchivo, totalEmpleados);
+
+
+            break;
+         case 3:
+            break;
+         case 4:
+            salir = true;
+            break;
+         default:
+            System.out.println("Ha ocurrido un error");
+      }
     }
-    leerArchivo(nombreArchivo);
-    guardarNomina(nombreArchivo, nomina);
-
-    System.out.println("ESCRIBE LA NOMINA DEL EMPLEADO QUE DESEAS BUSCAR");
-    posicionEmpleado = encontrarEmpleado(nomina);
-    salarioMensual = Double.parseDouble(nomina[posicionEmpleado][3]);
-
-    System.out.println("ESCRIBE LA INFORMACION QUE SE PIDE");
-
-    System.out.println("Días Trabajados: ");
-    diasTrabajados = lectura.nextInt();
-
-    System.out.println("Bonos: ");
-    bonos = lectura.nextDouble();
-
-    System.out.println("Días Feriados: ");
-    feriados = lectura.nextInt();
-
-    System.out.println("Horas Extra: ");
-    horasExtra = lectura.nextInt();
-
-    salarioDiario = calcularSalarioDiario(salarioMensual);
-    sueldo = calcularSueldo(salarioDiario, diasTrabajados);
-    sueldoDiasFeriados = calcularSueldoDiasFeriados(salarioDiario, feriados);
-    sueldoHorasExtra = calcularSueldoHorasExtra(salarioDiario, horasExtra);
-    asignaciones = calcularAsignaciones(sueldoDiasFeriados, sueldoHorasExtra, bonos);
-    percepciones = calcularPercepciones(sueldo, asignaciones);
-
-    System.out.println(percepciones);
   }
 
-  //leerArchivo guarda los datos de Excel en una matriz
-  public static String[][] leerArchivo(String nombreArchivo) throws IOException
+  public static String[][] leerNomina(String nombreArchivo, int totalEmpleados) throws IOException
   {
     String datosLeidos;
-    String[][] nomina = new String[20][6];
+    String[][] nomina = new String[totalEmpleados][6];
     String[] empleado;
 
     FileReader lector = new FileReader (nombreArchivo);
     BufferedReader br = new BufferedReader(lector); //lee un bloque sin utilzar el disco
 
-    for(int y = 0; y < 20; y++)
+    for(int y = 0; y < totalEmpleados; y++)
     {
       datosLeidos = br.readLine();
       empleado = datosLeidos.split(",");
@@ -79,16 +183,15 @@ public class Nomina //Inicio clase Nomina
     lector.close();
     return (nomina);
   }
-//guardarNomina permite agregar empleados a la nómina
-  public static void guardarNomina(String nombreArchivo, String[][] nomina) throws IOException{
 
-    String[] empleado = new String[6];
+  public static void guardarNomina(String nombreArchivo, String[][] nomina, String[] empleado) throws IOException{
+
     String datosLeidos = "";
-    FileWriter escritor = new FileWriter(nombreArchivo,true);
+    FileWriter escritor = new FileWriter(nombreArchivo, true);
     PrintWriter pw = new PrintWriter(escritor);
 
     datosLeidos = String.join(",", empleado);
-    //pw.println(datosLeidos);
+    pw.println(datosLeidos);
 
     for(int y = 0; y < 20; y++)
     {
@@ -96,20 +199,13 @@ public class Nomina //Inicio clase Nomina
         empleado[x] = nomina[y][x];
       }
       datosLeidos = String.join(",", empleado);
-      //pw.println(datosLeidos);
+      pw.println(datosLeidos);
     }
     escritor.close();
   }
 
-  //Este metodo busca al empleado en el arreglo nomina y regresa la posicion en la se encuentra.
-  public static int encontrarEmpleado(String[][] nomina){
-    Scanner lectura = new Scanner(System.in);
-    String nominaEmpleado;
+  public static int encontrarEmpleado(String[][] nomina, String nominaEmpleado){
     int posicionEmpleado = -1;
-
-    System.out.print("Ingrese el número de nómina del trabajador: ");
-    nominaEmpleado = lectura.next();
-
     for (int y = 0; y < nomina.length; y++) {
       if (nomina[y][5].equals(nominaEmpleado)){
           posicionEmpleado = y;
@@ -155,38 +251,68 @@ public class Nomina //Inicio clase Nomina
     return (totalDeAsignaciones);
   }
 
-  //Este metodo regresa las deducciones del empleado
-  public static double calcularDeducciones(double percepciones){
-    Scanner lectura = new Scanner(System.in);
-    double deducciones, iva, isr, prestamos;
-
-    System.out.println("Prestamos: ");
-
-    prestamos = lectura.nextInt();
-    iva = percepciones * 0.16;
-    isr = percepciones * 0.18;
-
-    deducciones = prestamos + iva + isr;
-
+  public static double calcularDeducciones(double prestamos, double deduccionPorIva, double deduccionPorIsr){
+    double deducciones;
+    deducciones = prestamos + deduccionPorIva + deduccionPorIsr;
     return (deducciones);
   }
 
-  //Este metodo resta las deducciones a las percepciones del empleado
+  public static double calcularIva(double percepciones){
+    double deduccionPorIva;
+    deduccionPorIva = percepciones * 0.16;
+    return (deduccionPorIva);
+  }
+
+  public static double calcularIsr(double percepciones){
+    double deduccionPorIsr;
+    deduccionPorIsr = percepciones * 0.18;
+    return (deduccionPorIsr);
+  }
+
   public static double calcularSueldoNeto(double percepciones, double deducciones){
     double sueldoNeto;
     sueldoNeto = percepciones - deducciones;
     return (sueldoNeto);
   }
 
-  //Este metodo regres el nombre, el apellido y el numero de nomina del empleado en un string
   public static String imprimirEmpleado(String[][] nomina, int y){
     String nombre, apellido, numeroDeNomina;
     nombre = nomina[y][0];
     apellido = nomina[y][1];
     numeroDeNomina = nomina[y][5];
-    return ("       " +numeroDeNomina + "                " + nombre + " " + apellido);
+    return ("     " + numeroDeNomina + "            " + nombre + " " + apellido);
   }
 
+  public static String imprimirFichaEmpleado(String[][] nomina, int posicionEmpleado, int x ){
+    String datoEmpleado;
+    datoEmpleado = nomina[posicionEmpleado][x];
+    return (nomina[0][x] + ": " + datoEmpleado);
+  }
+
+  public static String modificarInformacionEmpleado(String[][] nomina, int posicionEmpleado, int posicionInformacion, String nuevaInformacion){
+    nomina[posicionEmpleado][posicionInformacion] = nuevaInformacion;
+    return("Cambio realizado exitosamente");
 
 
+
+
+  }
+
+  public static int agregarEmpleado(String nombreArchivo, String[][] nomina, String[] empleado, int totalEmpleados) throws IOException{
+
+    String datosLeidos;
+    FileWriter escritor = new FileWriter(nombreArchivo, true);
+    PrintWriter pw = new PrintWriter(escritor);
+    datosLeidos = String.join(",", empleado);
+    if(nomina.length == 21){
+      pw.println();
+      pw.println(datosLeidos);
+    }
+    else{
+      pw.println(datosLeidos);
+    }
+    escritor.close();
+    return(totalEmpleados + 1);
+
+  }
 }
