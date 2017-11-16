@@ -18,13 +18,13 @@ public class Nomina //Inicio clase Nomina
     //Declaracion de variables
     double salarioMensual, salarioDiario, bonos, sueldo, sueldoDiasFeriados, sueldoHorasExtra, asignaciones, percepciones, deducciones, sueldoNeto, prestamos, deduccionPorIva, deduccionPorIsr;
 
-    int diasTrabajados, horasExtra, feriados, menu, totalEmpleados = 21;
+    int diasTrabajados, horasExtra, feriados, menu, totalEmpleados = 21, opcionAModificar;
     String nombreArchivo = "Informacion_Empleados.csv";
     String[][] nomina;
     Scanner lectura = new Scanner(System.in);
     int posicionEmpleado;
     String[] empleado = new String[6];
-    String nominaEmpleado;
+    String nominaEmpleado, nuevoDato;
     boolean salir = false;
 
     while(salir == false){
@@ -115,26 +115,34 @@ public class Nomina //Inicio clase Nomina
                 System.out.println("************************************");
                 System.out.println(" RECIBO DE PAGO DE " + nomina[posicionEmpleado][0].toUpperCase() + " " + nomina[posicionEmpleado][1].toUpperCase());
                 System.out.println(" Asignaciones: ");
-                System.out.println("   Bonos: $" + bonos);
-                System.out.println("   Sueldo por días feriados: $" + sueldoDiasFeriados);
-                System.out.println("   Sueldo por horas extras: $" + sueldoHorasExtra );
-                System.out.println("     Percepciones: $" + percepciones);
+                System.out.printf("   Bonos: $%.2f%n",bonos);
+                System.out.printf("   Sueldo por días feriados: $%.2f%n", sueldoDiasFeriados);
+                System.out.printf("   Sueldo por horas extras: $%.2f%n", sueldoHorasExtra );
+                System.out.printf("     Percepciones: $%.2f%n", percepciones);
                 System.out.println("------------------------------------");
                 System.out.println(" Deducciones: ");
-                System.out.println("   Prestamos: $" + prestamos);
-                System.out.println("   IVA: $" + deduccionPorIva);
-                System.out.println("   ISR: $" + deduccionPorIsr);
-                System.out.println("     Total de deducciones: $" + deducciones);
+                System.out.printf("   Prestamos: $%.2f%n", prestamos);
+                System.out.printf("   IVA: $%.2f%n", deduccionPorIva);
+                System.out.printf("   ISR: $%.2f%n", deduccionPorIsr);
+                System.out.printf("     Total de deducciones: $%.2f%n",deducciones);
                 System.out.println("-------------------------------------");
-                System.out.println("Sueldo Neto: $" + sueldoNeto);
+                System.out.printf("Sueldo Neto: $%.2f%n",sueldoNeto);
                 System.out.println("*************************************");
 
                 break;
                 case 6:
+                  System.out.println("ESCRIBA EL NÚMERO DE LA OPCIÓN QUE DESEE");
+                  System.out.println("(1) Nombre | (2) Apellido | (3) Cargo | (4) Sueldo | (5) Fecha de Ingreso | (6) Nomina");
+                  opcionAModificar = lectura.nextInt() - 1;
+                  System.out.println("Escriba el nuevo " + nomina[0][opcionAModificar]);
+                  nuevoDato = lectura.next();
+                  nomina[posicionEmpleado][opcionAModificar] = nuevoDato;
+                  guardarNomina(nombreArchivo, nomina, empleado);
                   break;
                 default:
                   System.out.println("Ha ocurrido un error");
             }
+            break;
          }
          else{
            System.out.println("La nomina no existe");
@@ -150,12 +158,12 @@ public class Nomina //Inicio clase Nomina
             totalEmpleados = agregarEmpleado(nombreArchivo, nomina, empleado, totalEmpleados);
             nomina = leerNomina(nombreArchivo, totalEmpleados);
 
-
             break;
          case 3:
             break;
          case 4:
             salir = true;
+            guardarNomina(nombreArchivo, nomina, empleado);
             break;
          default:
             System.out.println("Ha ocurrido un error");
@@ -289,15 +297,6 @@ public class Nomina //Inicio clase Nomina
     return (nomina[0][x] + ": " + datoEmpleado);
   }
 
-  public static String modificarInformacionEmpleado(String[][] nomina, int posicionEmpleado, int posicionInformacion, String nuevaInformacion){
-    nomina[posicionEmpleado][posicionInformacion] = nuevaInformacion;
-    return("Cambio realizado exitosamente");
-
-
-
-
-  }
-
   public static int agregarEmpleado(String nombreArchivo, String[][] nomina, String[] empleado, int totalEmpleados) throws IOException{
 
     String datosLeidos;
@@ -315,4 +314,5 @@ public class Nomina //Inicio clase Nomina
     return(totalEmpleados + 1);
 
   }
+
 }
