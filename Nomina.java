@@ -16,18 +16,30 @@ public class Nomina //Inicio clase Nomina
   public static void main(String[] args) throws IOException
   {
     //Declaracion de variables
+    Scanner sc = new Scanner(System.in);
     double salarioMensual, salarioDiario, bonos, sueldo, sueldoDiasFeriados, sueldoHorasExtra, asignaciones, percepciones, deducciones, sueldoNeto, prestamos, deduccionPorIva, deduccionPorIsr;
-
-    int diasTrabajados, horasExtra, feriados, menu, totalEmpleados = 21, opcionAModificar;
-    String nombreArchivo = "Informacion_Empleados.csv";
+    int diasTrabajados, horasExtra, feriados, menu, totalEmpleados=0, opcionAModificar;
+    String nombreArchivo = "BD-ProyectoProgra.csv";
     String[][] nomina;
     Scanner lectura = new Scanner(System.in);
     int posicionEmpleado;
     String[] empleado = new String[6];
-    String nominaEmpleado, nuevoDato;
+    String nominaEmpleado, nuevoDato, datosLeidos;
+    String res = "si";
     boolean salir = false;
 
-    while(salir == false){
+
+    while(res.equalsIgnoreCase("si") ){
+
+      totalEmpleados = 0;
+      FileReader lector = new FileReader (nombreArchivo);
+      BufferedReader br = new BufferedReader(lector);
+      while((datosLeidos = br.readLine()) !=null){
+        totalEmpleados++;
+      }
+      System.out.println(totalEmpleados);
+      br.close();
+      lector.close();
 
       nomina = leerNomina(nombreArchivo, totalEmpleados);
       System.out.println();
@@ -151,11 +163,7 @@ public class Nomina //Inicio clase Nomina
 
          case 2:
             System.out.println("ESCRIBE LA INFORMACIÓN REQUERIDA: ");
-            for(int y = 0; y < nomina[0].length; y++){
-              System.out.println(nomina[0][y] + ": ");
-              empleado[y] = lectura.next();
-            }
-            totalEmpleados = agregarEmpleado(nombreArchivo, nomina, empleado, totalEmpleados);
+            guardarNomina(nombreArchivo,nomina,empleado);
             nomina = leerNomina(nombreArchivo, totalEmpleados);
 
             break;
@@ -163,11 +171,12 @@ public class Nomina //Inicio clase Nomina
             break;
          case 4:
             salir = true;
-            guardarNomina(nombreArchivo, nomina, empleado);
             break;
          default:
             System.out.println("Ha ocurrido un error");
       }
+      System.out.print("¿Deseas hacer algo de más? (Si | No): ");
+      res = sc.nextLine();
     }
   }
 
@@ -194,21 +203,42 @@ public class Nomina //Inicio clase Nomina
 
   public static void guardarNomina(String nombreArchivo, String[][] nomina, String[] empleado) throws IOException{
 
+    Scanner sc = new Scanner(System.in);
+    String res;
+    String nombre, apll, carg, sueldoB, ingreso, num;
     String datosLeidos = "";
-    FileWriter escritor = new FileWriter(nombreArchivo, true);
+    FileWriter escritor = new FileWriter(nombreArchivo,true);
     PrintWriter pw = new PrintWriter(escritor);
 
-    datosLeidos = String.join(",", empleado);
-    pw.println(datosLeidos);
+    System.out.printf("%n¿Deseas agregar un nuevo empleado a la nómina? (Si | No): ");
+    res = sc.nextLine();
 
-    for(int y = 0; y < 20; y++)
-    {
-      for(int x = 0; x < 6; x++){
-        empleado[x] = nomina[y][x];
+    while (res.equalsIgnoreCase("si")) {
+
+        System.out.print("Nombre: ");
+        nombre = sc.nextLine();
+
+        System.out.print("Apellido: ");
+        apll = sc.nextLine();
+
+        System.out.print("Cargo: ");
+        carg = sc.nextLine();
+
+        System.out.print("Sueldo Base: $");
+        sueldoB = sc.nextLine();
+
+        System.out.print("Fecha de Ingreso (dd/mm/aa): ");
+        ingreso = sc.nextLine();
+
+        System.out.print("Número de Cuenta de Nómina (4323***): ");
+        num = sc.nextLine();
+
+        pw.printf("%n%s,%s,%s,%s,%s,%s",nombre,apll,carg,sueldoB,ingreso,num);
+
+        System.out.print("¿Deseas agregar de nuevo? (Si | No): ");
+        res = sc.nextLine();
       }
-      datosLeidos = String.join(",", empleado);
-      pw.println(datosLeidos);
-    }
+
     escritor.close();
   }
 
@@ -316,3 +346,4 @@ public class Nomina //Inicio clase Nomina
   }
 
 }
+
